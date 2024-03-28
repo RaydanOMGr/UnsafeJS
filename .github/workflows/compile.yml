@@ -25,10 +25,17 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+
+    - name: Setup C++ toolchain
+      uses: actions/setup-cpp@v2
+      with:
+        compiler: gcc
+    
     - name: Setup Node.js
       run: |
         npm init -y
         npm install -g node-gyp
+        
     - name: Build
       run: |
         node-gyp configure
