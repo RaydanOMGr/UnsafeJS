@@ -26,10 +26,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Setup C++ toolchain
-      uses: actions/setup-cpp@v2
-      with:
-        compiler: gcc
+    - name: Setup GCC
+      uses: Dup4/actions-setup-gcc@v1
     
     - name: Setup Node.js
       run: |
