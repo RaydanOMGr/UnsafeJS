@@ -37,6 +37,11 @@ jobs:
         npm init -y
         npm install -g node-gyp
 
+    - name: Setup Python
+      uses: actions/setup-python@v5.1.0
+      with:
+        python-version: 3.12
+
     - name: Check validity
       run: |
         whereis make
