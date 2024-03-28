@@ -28,6 +28,7 @@ jobs:
         cache: 'npm'
     - name: Setup Node.js
       run: |
+        npm init -y
         npm install -g node-gyp
     - name: Build
       run: |
