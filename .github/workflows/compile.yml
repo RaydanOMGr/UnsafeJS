@@ -35,14 +35,6 @@ jobs:
       run: |
         npm init -y
         npm install -g node-gyp
-
-    - name: Check validity
-      run: |
-        node --version
-        npm --help
-        node-gyp help
-        cmake --version
-        make --version
         
     - name: Build
       run: |
