@@ -65,10 +65,10 @@ namespace {
     args.GetReturnValue().Set(v8::BigInt::New(isolate, address));
   }
 
-  // Function to set the value at a memory location
-  void Set(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  // Function to get the object at a memory location
+  void Get(const v8::FunctionCallbackInfo<v8::Value>& args) {
     v8::Isolate* isolate = args.GetIsolate();
-    if (args.Length() < 2) {
+    if (args.Length() < 1) {
       isolate->ThrowException(v8::Exception::TypeError(
           v8::String::NewFromUtf8(isolate, "Wrong number of arguments").ToLocalChecked()));
       return;
@@ -76,42 +76,22 @@ namespace {
 
     if (!args[0]->IsBigInt()) {
       isolate->ThrowException(v8::Exception::TypeError(
-          v8::String::NewFromUtf8(isolate, "First argument must be a bigint").ToLocalChecked()));
+          v8::String::NewFromUtf8(isolate, "Argument must be a bigint").ToLocalChecked()));
       return;
     }
 
-    v8::Local<v8::Object> obj = args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-
     void* ptr = reinterpret_cast<void*>(args[0].As<v8::BigInt>()->Uint64Value());
 
-    // Set the value at the memory location
-    *(reinterpret_cast<v8::Local<v8::Value>*>(ptr)) = obj;
+    // Get the object at the memory location
+    v8::Local<v8::Value> value = *(reinterpret_cast<v8::Local<v8::Value>*>(ptr));
+
+    // Unwrap the value if it's a local value
+    if (!value.IsEmpty() && value->IsObject()) {
+      args.GetReturnValue().Set(value.As<v8::Object>());
+    } else {
+      args.GetReturnValue().SetNull();
+    }
   }
-
-  // Function to get the object at a memory location
-  void Get(const v8::FunctionCallbackInfo<v8::Value>& args) {
-      v8::Isolate* isolate = args.GetIsolate();
-      if (args.Length() < 1) {
-          isolate->ThrowException(v8::Exception::TypeError(
-              v8::String::NewFromUtf8(isolate, "Wrong number of arguments").ToLocalChecked()));
-          return;
-      }
-
-      if (!args[0]->IsBigInt()) {
-          isolate->ThrowException(v8::Exception::TypeError(
-              v8::String::NewFromUtf8(isolate, "Argument must be a bigint").ToLocalChecked()));
-          return;
-      }
-
-      void* ptr = reinterpret_cast<void*>(args[0].As<v8::BigInt>()->Uint64Value());
-
-      // Get the object at the memory location
-      v8::Local<v8::Value> value = *(reinterpret_cast<v8::Local<v8::Value>*>(ptr));
-
-      // Return the object
-      args.GetReturnValue().Set(value);
-  }
-
 
   // Initialize the module
   void Initialize(v8::Local<v8::Object> exports) {
