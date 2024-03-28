@@ -46,6 +46,7 @@ jobs:
       run: |
         node-gyp configure
         ls
+        cat build
         node-gyp build
         ls
     
