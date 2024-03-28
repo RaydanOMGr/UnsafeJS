@@ -88,12 +88,38 @@ namespace {
     *(reinterpret_cast<v8::Local<v8::Value>*>(ptr)) = obj;
   }
 
+  // Function to get the object at a memory location
+  void Get(const v8::FunctionCallbackInfo<v8::Value>& args) {
+      v8::Isolate* isolate = args.GetIsolate();
+      if (args.Length() < 1) {
+          isolate->ThrowException(v8::Exception::TypeError(
+              v8::String::NewFromUtf8(isolate, "Wrong number of arguments").ToLocalChecked()));
+          return;
+      }
+
+      if (!args[0]->IsBigInt()) {
+          isolate->ThrowException(v8::Exception::TypeError(
+              v8::String::NewFromUtf8(isolate, "Argument must be a bigint").ToLocalChecked()));
+          return;
+      }
+
+      void* ptr = reinterpret_cast<void*>(args[0].As<v8::BigInt>()->Uint64Value());
+
+      // Get the object at the memory location
+      v8::Local<v8::Value> value = *(reinterpret_cast<v8::Local<v8::Value>*>(ptr));
+
+      // Return the object
+      args.GetReturnValue().Set(value);
+  }
+
+
   // Initialize the module
   void Initialize(v8::Local<v8::Object> exports) {
     NODE_SET_METHOD(exports, "allocMem", AllocMem);
     NODE_SET_METHOD(exports, "freeMem", FreeMem);
     NODE_SET_METHOD(exports, "getLocation", GetLocation);
     NODE_SET_METHOD(exports, "set", Set);
+    NODE_SET_METHOD(exports, "get", Get);
   }
 
   NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)
