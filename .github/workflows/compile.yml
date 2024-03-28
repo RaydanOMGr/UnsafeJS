@@ -40,11 +40,15 @@ jobs:
     - name: Check validity
       run: |
         whereis make
+        ls
         
     - name: Build
       run: |
         node-gyp configure
+        ls
         node-gyp build
+        ls
+    
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.1
       with:
