@@ -26,13 +26,23 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Setup GCC
-      uses: Dup4/actions-setup-gcc@v1
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v1.14
+      with:
+        cmake-version: '3.16.x'
     
     - name: Setup Node.js
       run: |
         npm init -y
         npm install -g node-gyp
+
+    - name: Check validity
+      run: |
+        node --version
+        npm --help
+        node-gyp --version
+        cmake --version
+        make --version
         
     - name: Build
       run: |
