@@ -40,7 +40,7 @@ jobs:
       run: |
         node --version
         npm --help
-        node-gyp --version
+        node-gyp help
         cmake --version
         make --version
         
